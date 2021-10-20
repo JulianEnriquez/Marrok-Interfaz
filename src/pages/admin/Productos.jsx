@@ -104,20 +104,69 @@ const TablaPrductos = ({listaProductos}) => {
                 <tbody>
                     {listaProductos.map((producto)=>{
                         return(
-                            <tr key={nanoid()}>
-                                <td>{producto.id}</td>
-                                <td>{producto.category}</td>
-                                <td>{producto.estilo}</td>
-                                <td>{producto.existencias}</td>
-                                <td>{producto.costoProduccion}</td>
-                                <td>{producto.valorVenta}</td>
-                                <td>{producto.fechaIngreso}</td>
-                            </tr>
+                            <FilaProducto key={nanoid()} producto={producto}/>
                         );
                     })}
                 </tbody>
             </table>
         </div>
+    );
+};
+
+const FilaProducto =({producto}) =>{
+    const [edit, setEdit] = useState(false);
+    return(
+        <tr>
+            {edit ?
+                <>
+                    <td><input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg'
+                     type="text" defaultValue={producto.id} />
+                    </td>
+                    <td><input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg'
+                     type="text" defaultValue={producto.category} />
+                    </td>
+                    <td><input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg'
+                     type="text" defaultValue={producto.estilo} /> 
+                    </td>
+                    <td><input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg'
+                     type="text" defaultValue={producto.existencias}/> 
+                    </td>
+                    <td><input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg'
+                     type="text" defaultValue={producto.costoProduccion} />
+                    </td>
+                    <td><input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg'
+                     type="text" defaultValue={producto.valorVenta}/> 
+                    </td>
+                    <td><input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg'
+                     type="text" defaultValue={producto.fechaIngreso}/> 
+                    </td>
+                </>
+                :
+                <>
+                <td>{producto.id}</td>
+                <td>{producto.category}</td>
+                <td>{producto.estilo}</td>
+                <td>{producto.existencias}</td>
+                <td>{producto.costoProduccion}</td>
+                <td>{producto.valorVenta}</td>
+                <td>{producto.fechaIngreso}</td>
+                </>
+            }
+            <td>
+                <div className='flex w-full justify-around'>
+                    {edit ? (
+                        <i onClick={()=> setEdit(!edit)}
+                        className='fas fa-check text-yellow-700 hover:text-yellow-400'
+                        />   
+                    ) : (
+                        <i onClick={() => setEdit(!edit)} 
+                        className='fas fa-pencil-alt text-green-900 hover:text-green-400'
+                        />)
+                    }
+                    <i className= 'fas fa-trash-alt text-red-900 hover:text-red-400' ></i>
+                </div>
+            </td>
+        </tr>
     );
 };
 
@@ -161,7 +210,7 @@ const FormularioAgregarProducto = ({setMostarTabla, listaProductos ,setProductos
             <form ref={form} onSubmit={submitForm} className='flex flex-col'>
                 <label className='flex flex-col' htmlFor="idProducto">
                     Id Producto
-                    <input name='id' type="number" placeholder='id' min={0} required />
+                    <input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg' name='id' type="number" placeholder='id' min={0} required />
                 </label>
                 <label className='flex flex-col' htmlFor="categoria">
                     Categoria
@@ -178,26 +227,26 @@ const FormularioAgregarProducto = ({setMostarTabla, listaProductos ,setProductos
                     Estilo
                     <select name="estilo" defaultValue={0} required>
                         <option disabled value={0}>Seleccione un estilo</option>
-                        <option>Foral</option>
+                        <option>Formal</option>
                         <option>Informal</option>
                         <option>Deportivo</option>
                     </select>
                 </label>
                 <label className='flex flex-col' htmlFor="existencias">
                     Existencias
-                    <input name='existencias' type="number" placeholder='0' required/>
+                    <input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg' name='existencias' type="number" placeholder='0' required/>
                 </label>
                 <label className='flex flex-col' htmlFor="costoProduccion">
                     Costo de Produccion
-                    <input name='costoProduccion' type="number" placeholder='0 $' required/>
+                    <input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg' name='costoProduccion' type="number" placeholder='0 $' required/>
                 </label>
                 <label className='flex flex-col' htmlFor="valorVenta">
                     Valor de Venta
-                    <input name='valorVenta' type="number" placeholder='0 $' required/>
+                    <input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg' name='valorVenta' type="number" placeholder='0 $' required/>
                 </label>
                 <label className='flex flex-col' htmlFor="fechaIngreso">
                     Fecha de Ingreso
-                    <input name='fechaIngreso' type="date" required/>
+                    <input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg' name='fechaIngreso' type="date" required/>
                 </label>
 
                 <button 

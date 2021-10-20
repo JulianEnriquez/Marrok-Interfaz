@@ -1,9 +1,12 @@
+import NavbarUsuarios from 'components/NavbarUsuarios'
+import TablasUsuarios from 'components/TablasUsuarios'
 import React from 'react'
 
 const Usuarios = () => {
     return (
         <div>
-            Administracion de Usuarios
+            <NavbarUsuarios/>
+            <TablasUsuarios/>
         </div>
     )
 }
