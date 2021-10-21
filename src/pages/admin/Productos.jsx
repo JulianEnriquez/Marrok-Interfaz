@@ -1,28 +1,8 @@
-//import axios from 'axios';
+import axios from 'axios';
 import React, { useEffect, useState, useRef } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { nanoid } from 'nanoid';
-
-const productosBackend = [{
-    id: "12345",
-    category: "calzado",
-    estilo: "Deportivo",
-    existencias: 10,
-    costoProduccion: 900,
-    valorVenta: 1800,
-    fechaIngreso: "2012-01-01",
-},
-{id: "12345",
-    category: "calzado",
-    estilo: "Deportivo",
-    existencias: 10,
-    costoProduccion: 900,
-    valorVenta: 1800,
-    fechaIngreso: "2012-01-01",
-}
-]
-
 
 
 const Productos = () => {
@@ -30,11 +10,35 @@ const Productos = () => {
     const [productos, setProductos] = useState([]);
     const [textoBoton, setTextoBoton] = useState('Agregar Nuevo Producto');
     const [colorBoton, setColorBoton] = useState('indigo');
+    const [ejecutarConsulta, setEjecutarConsulta] = useState(true);
+
+    const obtenerProductos = async () => {
+        const options = {method: 'GET', url: 'http://localhost:5050/productos'}
+        await axios
+        .request(options)
+        .then(function (response){
+            setProductos(response.data);
+        })
+        .catch(function(error) {
+            console.error(error);
+        });
+        setEjecutarConsulta(false);
+    };
 
     useEffect(() => {
-        //obtener lista de vehículos desde el backend
-        setProductos(productosBackend);
-      }, []);
+        console.log('consulta',ejecutarConsulta);
+        if (ejecutarConsulta) {
+            obtenerProductos();
+            setEjecutarConsulta(false);
+        }
+    }, [ejecutarConsulta]);
+
+    useEffect(() => {
+        //obtener lista de productos desde el back
+        if (mostrarTabla){
+            setEjecutarConsulta(true);
+        }
+      }, [mostrarTabla]);
     
     useEffect(() => {
         if (mostrarTabla) {
@@ -61,7 +65,7 @@ const Productos = () => {
                 </button>
             </div>
             {mostrarTabla ? (
-                <TablaPrductos listaProductos={productos}/>
+                <TablaPrductos listaProductos={productos} setEjecutarConsulta={setEjecutarConsulta}/>
             ): (
                 <FormularioAgregarProducto 
                 setMostarTabla={setMostarTabla}
@@ -71,7 +75,7 @@ const Productos = () => {
 
             <ToastContainer
                 position="top-right"
-                autoClose={1000}
+                autoClose={3000}
             />
 
         </div>
@@ -80,65 +84,133 @@ const Productos = () => {
 
 
 
-const TablaPrductos = ({listaProductos}) => {
+const TablaPrductos = ({listaProductos, setEjecutarConsulta}) => {
     useEffect(()=>{
-        console.log('este es el listado de productos', listaProductos);
+        //console.log('este es el listado de productos', listaProductos);
     },[listaProductos]);
+
+
     return (
         <div className= 'flex flex-col items-center justify-center w-full'>
             <h2> Todos los producto</h2>
-            
             <table className='tabla'>
                 <thead>
                     <tr>
                         <th>Id Producto</th>
-                        <th>Categoria</th>
-                        <th>Estilo</th>
-                        <th>Existencias</th>
-                        <th>Costo de produccion</th>
-                        <th>Valor de venta</th>
-                        <th>Fecha Ingreso</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {listaProductos.map((producto)=>{
-                        return(
-                            <FilaProducto key={nanoid()} producto={producto}/>
-                        );
-                    })}
-                </tbody>
-            </table>
+                            <th>Categoria</th>
+                            <th>Estilo</th>
+                            <th>Existencias</th>
+                            <th>Costo de produccion</th>
+                            <th>Valor de venta</th>
+                            <th>Fecha Ingreso</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {listaProductos.map((producto)=>{
+                            return(
+                                <FilaProducto key={nanoid()} producto={producto} setEjecutarConsulta ={setEjecutarConsulta}/>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            
         </div>
     );
 };
 
-const FilaProducto =({producto}) =>{
+const FilaProducto =({producto , setEjecutarConsulta}) =>{
+    console.log('producto', producto._id)
     const [edit, setEdit] = useState(false);
+    const [infoNuevoProducto, setInfoNuevoProducto] = useState({
+    
+        category : producto.category,
+        estilo: producto.estilo,
+        existencias : producto.existencias,
+        costoProduccion: producto.costoProduccion,
+        valorVenta : producto.valorVenta,
+        fechaIngreso: producto.fechaIngreso
+    });
+
+    const actualizarProducto = async () => {
+        console.log(infoNuevoProducto);
+        //enviar la info al backend
+        const options = {
+          method: 'PATCH',
+          url: 'http://localhost:5050/productos/editar',
+          headers: { 'Content-Type': 'application/json' },
+          data: { ...infoNuevoProducto, id: producto._id },
+        };
+    
+        await axios
+          .request(options)
+          .then(function (response) {
+            console.log(response.data);
+            toast.success('Producto modificado con éxito');
+            setEdit(false);
+            setEjecutarConsulta(true);
+          })
+          .catch(function (error) {
+            toast.error('Error modificando el producto');
+            console.error(error);
+          });
+    };
+
+    const eliminarProdcuto = async()=>{
+        const options = {
+            method: 'DELETE',
+            url: 'http://localhost:5050/productos/eliminar',
+            headers: {'Content-Type': 'application/json'},
+            data: {id :producto._id}
+          };
+          
+          await axios
+          .request(options)
+          .then(function (response) {
+            console.log(response.data);
+            toast.success('producto eliminado exitosamente')
+            setEjecutarConsulta(true);
+          })
+          .catch(function (error) {
+            console.error(error);
+            toast.error('error eliminando producto')
+          });
+    }
+
     return(
         <tr>
             {edit ?
                 <>
-                    <td><input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg'
-                     type="text" defaultValue={producto.id} />
+                    <td> {producto.id}
+                        {/* <input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg'
+                     type="text" value={infoNuevoProducto.id}
+                    onChange={(e) => setInfoNuevoProducto({...infoNuevoProducto, id: e.target.value})} 
+                    />
+                    */}
                     </td>
-                    <td><input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg'
-                     type="text" defaultValue={producto.category} />
+                    <td><input className='border-2 border-gray-900 w-full py-2 rounded-lg'
+                     type="text" value={infoNuevoProducto.category}
+                     onChange={(e) => setInfoNuevoProducto({...infoNuevoProducto, category: e.target.value})}/>
                     </td>
-                    <td><input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg'
-                     type="text" defaultValue={producto.estilo} /> 
+                    <td><input className='border-2 border-gray-900 w-full py-2 rounded-lg'
+                     type="text" value={infoNuevoProducto.estilo}
+                     onChange={(e) => setInfoNuevoProducto({...infoNuevoProducto, estilo: e.target.value})} /> 
                     </td>
-                    <td><input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg'
-                     type="text" defaultValue={producto.existencias}/> 
+                    <td><input className='border-2 border-gray-900 w-full py-2 rounded-lg'
+                     type="number" value={infoNuevoProducto.existencias}
+                     onChange={(e) => setInfoNuevoProducto({...infoNuevoProducto, existencias: e.target.value})}/> 
                     </td>
-                    <td><input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg'
-                     type="text" defaultValue={producto.costoProduccion} />
+                    <td><input className='border-2 border-gray-900 w-full py-2 rounded-lg'
+                     type="number" value={infoNuevoProducto.costoProduccion}
+                     onChange={(e) => setInfoNuevoProducto({...infoNuevoProducto, costoProduccion: e.target.value})}/>
                     </td>
-                    <td><input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg'
-                     type="text" defaultValue={producto.valorVenta}/> 
+                    <td><input className='border-2 border-gray-900 w-full py-2 rounded-lg'
+                     type="number" value={infoNuevoProducto.valorVenta}
+                     onChange={(e) => setInfoNuevoProducto({...infoNuevoProducto, valorVenta: e.target.value})}/> 
                     </td>
-                    <td><input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg'
-                     type="text" defaultValue={producto.fechaIngreso}/> 
+                    <td><input className='border-2 border-gray-900 w-full py-2 rounded-lg'
+                     type="date" value={infoNuevoProducto.fechaIngreso}
+                     onChange={(e) => setInfoNuevoProducto({...infoNuevoProducto, fechaIngreso: e.target.value})}/> 
                     </td>
                 </>
                 :
@@ -155,7 +227,7 @@ const FilaProducto =({producto}) =>{
             <td>
                 <div className='flex w-full justify-around'>
                     {edit ? (
-                        <i onClick={()=> setEdit(!edit)}
+                        <i onClick={()=> actualizarProducto()}
                         className='fas fa-check text-yellow-700 hover:text-yellow-400'
                         />   
                     ) : (
@@ -163,7 +235,8 @@ const FilaProducto =({producto}) =>{
                         className='fas fa-pencil-alt text-green-900 hover:text-green-400'
                         />)
                     }
-                    <i className= 'fas fa-trash-alt text-red-900 hover:text-red-400' ></i>
+                    <i onClick ={()=> eliminarProdcuto()} 
+                    className= 'fas fa-trash-alt text-red-900 hover:text-red-400' />
                 </div>
             </td>
         </tr>
@@ -181,27 +254,27 @@ const FormularioAgregarProducto = ({setMostarTabla, listaProductos ,setProductos
             nuevoProducto[key] = value;
         });
 
-        // const options = {
-        //     method: 'POST',
-        //     url: 'https://vast-waters-45728.herokuapp.com/vehicle/create',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     data: { id: nuevoProducto.idProducto, category: nuevoProducto.categoria },
-        //   };
+        const options = {
+             method: 'POST',
+             url: 'http://localhost:5050/productos/nuevo',
+             headers: { 'Content-Type': 'application/json' },
+             data: {...nuevoProducto, id: nuevoProducto.id},
+            };
 
-        // await axios
-        // .request(options)
-        // .then(function (response) {
-        //   console.log(response.data);
-        //   toast.success('Vehículo agregado con éxito');
-        // })
-        // .catch(function (error) {
-        //   console.error(error);
-        //   toast.error('Error creando un vehículo');
-        // });
+        await axios
+        .request(options)
+        .then(function (response) {
+           console.log(response.data);
+           toast.success('Vehículo agregado con éxito');
+        })
+        .catch(function (error) {
+           console.error(error);
+           toast.error('Error creando un vehículo');
+        });
 
         setMostarTabla(true);
-        setProductos([...listaProductos, nuevoProducto]);
-        toast.success('Exito');
+        // setProductos([...listaProductos, nuevoProducto]);
+        // toast.success('Exito');
     };
 
     return (
@@ -210,7 +283,7 @@ const FormularioAgregarProducto = ({setMostarTabla, listaProductos ,setProductos
             <form ref={form} onSubmit={submitForm} className='flex flex-col'>
                 <label className='flex flex-col' htmlFor="idProducto">
                     Id Producto
-                    <input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg' name='id' type="number" placeholder='id' min={0} required />
+                    <input className='border-gray-900 w-full py-2 rounded-lg' name='id' type="number" placeholder='id' min={0} required />
                 </label>
                 <label className='flex flex-col' htmlFor="categoria">
                     Categoria
@@ -234,19 +307,19 @@ const FormularioAgregarProducto = ({setMostarTabla, listaProductos ,setProductos
                 </label>
                 <label className='flex flex-col' htmlFor="existencias">
                     Existencias
-                    <input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg' name='existencias' type="number" placeholder='0' required/>
+                    <input className=' border-gray-900 w-full py-2 rounded-lg' name='existencias' type="number" min='0' placeholder='0' required/>
                 </label>
                 <label className='flex flex-col' htmlFor="costoProduccion">
                     Costo de Produccion
-                    <input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg' name='costoProduccion' type="number" placeholder='0 $' required/>
+                    <input className='border-gray-900 w-full py-2 rounded-lg' name='costoProduccion' type="number" min='0' placeholder='0 $' required/>
                 </label>
                 <label className='flex flex-col' htmlFor="valorVenta">
                     Valor de Venta
-                    <input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg' name='valorVenta' type="number" placeholder='0 $' required/>
+                    <input className=' border-gray-900 w-full py-2 rounded-lg' name='valorVenta' type="number" min='0' placeholder='0 $' required/>
                 </label>
                 <label className='flex flex-col' htmlFor="fechaIngreso">
                     Fecha de Ingreso
-                    <input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg' name='fechaIngreso' type="date" required/>
+                    <input className=' border-gray-900 w-full py-2 rounded-lg' name='fechaIngreso' type="date" required/>
                 </label>
 
                 <button 
