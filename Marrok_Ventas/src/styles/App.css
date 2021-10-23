@@ -1,0 +1,34 @@
+/* ./src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.tabla{
+    width: 100%;
+    margin: 10px;
+    overflow-y: scroll;
+}
+
+.tabla td,
+.tabla th {
+  padding: 8px;
+  border: 1px solid #8d99ae;
+ 
+}
+
+.tabla th {
+    background-color: #2b2d42;
+    color: white;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: center;
+}
+  
+  .tabla tr:nth-child(even) {
+    background-color: #adb5bd   ;
+}
+  
+  .tabla tr:hover {
+    background-color: #f6f4d2;
+    cursor: pointer;
+}
