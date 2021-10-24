@@ -3,6 +3,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { nanoid } from 'nanoid';
+import {Tooltip , Dialog} from '@material-ui/core';
+
 
 
 const Productos = () => {
@@ -38,7 +40,7 @@ const Productos = () => {
         if (mostrarTabla){
             setEjecutarConsulta(true);
         }
-      }, [mostrarTabla]);
+    }, [mostrarTabla]);
     
     useEffect(() => {
         if (mostrarTabla) {
@@ -53,7 +55,7 @@ const Productos = () => {
     return (
         <div className='flex h-full w-full flex-col items-center justify-start p-8'>
             <div className='flex flex-col w-full'>
-                <h2 className='text-5xl font-extrabol text-gray-900'>
+                <h2 className='text-5xl font-extrabol text-yellow-600 text-center italic'>
                     Administracion de Productos
                 </h2>
                 <button onClick={() => {
@@ -74,7 +76,7 @@ const Productos = () => {
             )}
 
             <ToastContainer
-                position="top-right"
+                position="bottom-right"
                 autoClose={3000}
             />
 
@@ -82,16 +84,34 @@ const Productos = () => {
     );
 };
 
-
-
 const TablaPrductos = ({listaProductos, setEjecutarConsulta}) => {
-    useEffect(()=>{
-        //console.log('este es el listado de productos', listaProductos);
-    },[listaProductos]);
+    //filtro de busqueda
+    const[busqueda,setBusqueda] = useState('');
+    const[productosFiltrados, setProductosFiltrados] = useState(listaProductos);
 
+    useEffect(()=>{
+        setProductosFiltrados(
+            listaProductos.filter((elemento) => {
+                return JSON.stringify(elemento).toLowerCase().includes(busqueda.toLowerCase());
+                //busqueda general por medio de id, categoria, estilo, fecha, precio...
+                
+            })
+        );
+    },[busqueda, listaProductos])
+
+    //----------------- Termina Busqueda ----------------
+    // useEffect(()=>{
+    //     //console.log('este es el listado de productos', listaProductos);
+    // },[listaProductos]);
 
     return (
         <div className= 'flex flex-col items-center justify-center w-full'>
+            <input
+                value = {busqueda}
+                onChange = {(e) => setBusqueda(e.target.value)} 
+                placeholder='Buscar producto' 
+                className='border-2 border-gray-800 rounded-md px-2 py-1 self-start focus:outline-none focus:border-blue-500' 
+            />
             <h2> Todos los producto</h2>
             <table className='tabla'>
                 <thead>
@@ -107,7 +127,7 @@ const TablaPrductos = ({listaProductos, setEjecutarConsulta}) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {listaProductos.map((producto)=>{
+                        {productosFiltrados.map((producto)=>{
                             return(
                                 <FilaProducto key={nanoid()} producto={producto} setEjecutarConsulta ={setEjecutarConsulta}/>
                             );
@@ -120,8 +140,9 @@ const TablaPrductos = ({listaProductos, setEjecutarConsulta}) => {
 };
 
 const FilaProducto =({producto , setEjecutarConsulta}) =>{
-    console.log('producto', producto._id)
+    console.log('producto', producto._id);
     const [edit, setEdit] = useState(false);
+    const [openDialog, setOpenDialog] =useState(false);
     const [infoNuevoProducto, setInfoNuevoProducto] = useState({
     
         category : producto.category,
@@ -137,9 +158,9 @@ const FilaProducto =({producto , setEjecutarConsulta}) =>{
         //enviar la info al backend
         const options = {
           method: 'PATCH',
-          url: 'http://localhost:5050/productos/editar',
+          url: `http://localhost:5050/productos/${producto._id}/`,
           headers: { 'Content-Type': 'application/json' },
-          data: { ...infoNuevoProducto, id: producto._id },
+          data: { ...infoNuevoProducto},
         };
     
         await axios
@@ -159,7 +180,7 @@ const FilaProducto =({producto , setEjecutarConsulta}) =>{
     const eliminarProdcuto = async()=>{
         const options = {
             method: 'DELETE',
-            url: 'http://localhost:5050/productos/eliminar',
+            url: 'http://localhost:5050/productos/:id',
             headers: {'Content-Type': 'application/json'},
             data: {id :producto._id}
           };
@@ -182,62 +203,100 @@ const FilaProducto =({producto , setEjecutarConsulta}) =>{
             {edit ?
                 <>
                     <td> {producto.id}
-                        {/* <input className='bg-blue-400 border-gray-900 w-full py-2 rounded-lg'
+                        {/* <input className='bg-blue-400 border-gray-900 w-full p-1 rounded-lg'
                      type="text" value={infoNuevoProducto.id}
                     onChange={(e) => setInfoNuevoProducto({...infoNuevoProducto, id: e.target.value})} 
                     />
                     */}
                     </td>
-                    <td><input className='border-2 border-gray-900 w-full py-2 rounded-lg'
+                    <td><input className='border-2 border-gray-900 w-full p-1 rounded-lg focus:outline-none'
                      type="text" value={infoNuevoProducto.category}
                      onChange={(e) => setInfoNuevoProducto({...infoNuevoProducto, category: e.target.value})}/>
                     </td>
-                    <td><input className='border-2 border-gray-900 w-full py-2 rounded-lg'
+                    <td><input className='border-2 border-gray-900 w-full p-1 rounded-lg focus:outline-none'
                      type="text" value={infoNuevoProducto.estilo}
                      onChange={(e) => setInfoNuevoProducto({...infoNuevoProducto, estilo: e.target.value})} /> 
                     </td>
-                    <td><input className='border-2 border-gray-900 w-full py-2 rounded-lg'
+                    <td><input className='border-2 border-gray-900 w-full p-1 rounded-lg focus:outline-none'
                      type="number" value={infoNuevoProducto.existencias}
                      onChange={(e) => setInfoNuevoProducto({...infoNuevoProducto, existencias: e.target.value})}/> 
                     </td>
-                    <td><input className='border-2 border-gray-900 w-full py-2 rounded-lg'
+                    <td><input className='border-2 border-gray-900 w-full p-1 rounded-lg focus:outline-none'
                      type="number" value={infoNuevoProducto.costoProduccion}
                      onChange={(e) => setInfoNuevoProducto({...infoNuevoProducto, costoProduccion: e.target.value})}/>
                     </td>
-                    <td><input className='border-2 border-gray-900 w-full py-2 rounded-lg'
+                    <td><input className='border-2 border-gray-900 w-full p-1 rounded-lg focus:outline-none'
                      type="number" value={infoNuevoProducto.valorVenta}
                      onChange={(e) => setInfoNuevoProducto({...infoNuevoProducto, valorVenta: e.target.value})}/> 
                     </td>
-                    <td><input className='border-2 border-gray-900 w-full py-2 rounded-lg'
+                    <td><input className='border-2 border-gray-900 w-full p-1 rounded-lg focus:outline-none'
                      type="date" value={infoNuevoProducto.fechaIngreso}
                      onChange={(e) => setInfoNuevoProducto({...infoNuevoProducto, fechaIngreso: e.target.value})}/> 
                     </td>
                 </>
                 :
                 <>
-                <td>{producto.id}</td>
-                <td>{producto.category}</td>
-                <td>{producto.estilo}</td>
-                <td>{producto.existencias}</td>
-                <td>{producto.costoProduccion}</td>
-                <td>{producto.valorVenta}</td>
-                <td>{producto.fechaIngreso}</td>
+                    <td>{producto.id}</td>
+                    <td>{producto.category}</td>
+                    <td>{producto.estilo}</td>
+                    <td>{producto.existencias}</td>
+                    <td>{producto.costoProduccion}</td>
+                    <td>{producto.valorVenta}</td>
+                    <td>{producto.fechaIngreso}</td>
                 </>
             }
             <td>
-                <div className='flex w-full justify-around'>
+                <div className='flex w-full justify-around' >
                     {edit ? (
-                        <i onClick={()=> actualizarProducto()}
-                        className='fas fa-check text-yellow-700 hover:text-yellow-400'
-                        />   
+                        <>
+                            <Tooltip title='Confirmar actualización'arrow>
+                                <i onClick={()=> actualizarProducto()}
+                                className='fas fa-check text-green-700 hover:text-green-400'
+                                />   
+                            </Tooltip>
+                            <Tooltip title='Cancelar'arrow>
+                                <i onClick={()=> setEdit(!edit)}
+                                className='fas fa-times-circle text-red-900 hover:text-red-600'
+                                />   
+                            </Tooltip>
+                            
+                        </>
                     ) : (
-                        <i onClick={() => setEdit(!edit)} 
-                        className='fas fa-pencil-alt text-green-900 hover:text-green-400'
-                        />)
-                    }
-                    <i onClick ={()=> eliminarProdcuto()} 
-                    className= 'fas fa-trash-alt text-red-900 hover:text-red-400' />
+                        <>
+                            <Tooltip title='Editar producto' arrow>
+                                <i onClick={() => setEdit(!edit)} 
+                                className='fas fa-pencil-alt text-yellow-900 hover:text-yellow-400'
+                                />
+
+                            </Tooltip>
+                            <Tooltip title='Eliminar producto' arrow>
+                                <i  onClick ={()=> setOpenDialog(true)} 
+                                className= 'fas fa-trash-alt hover:text-red-600' />
+
+                            </Tooltip>
+                        </>
+                    )}
                 </div>
+                    <div>
+                        <Dialog open={openDialog}>
+                            <div className='p-10 rounded-sm bg-gray-800 text-white flex flex-col'>
+                                <div className ='pb-4'>
+                                    <h1 className='font-semibold'>¿Quieres eliminar este producto?</h1>
+                                </div>
+
+                                <div className='absolute bottom-2 right-2'>
+                                    <button className='px-8 py-1 mr-1 bg-gray-800 rounded-sm hover:bg-green-500 hover:bg-opacity-25' 
+                                    onClick={()=> eliminarProdcuto()}>
+                                        Si      
+                                    </button>
+                                    <button className='px-8 py-1 ml-1 bg-gray-800 rounded-sm hover:bg-red-500 hover:bg-opacity-25' 
+                                    onClick={()=> setOpenDialog(false)}>
+                                        No
+                                    </button>
+                                </div>
+                            </div>
+                        </Dialog>
+                    </div>
             </td>
         </tr>
     );
@@ -256,7 +315,7 @@ const FormularioAgregarProducto = ({setMostarTabla, listaProductos ,setProductos
 
         const options = {
              method: 'POST',
-             url: 'http://localhost:5050/productos/nuevo',
+             url: 'http://localhost:5050/productos',
              headers: { 'Content-Type': 'application/json' },
              data: {...nuevoProducto, id: nuevoProducto.id},
             };
@@ -283,7 +342,7 @@ const FormularioAgregarProducto = ({setMostarTabla, listaProductos ,setProductos
             <form ref={form} onSubmit={submitForm} className='flex flex-col'>
                 <label className='flex flex-col' htmlFor="idProducto">
                     Id Producto
-                    <input className='border-gray-900 w-full py-2 rounded-lg' name='id' type="number" placeholder='id' min={0} required />
+                    <input className='border-gray-900 w-full p-1 rounded-lg' name='id' type="number" placeholder='id' min={0} required />
                 </label>
                 <label className='flex flex-col' htmlFor="categoria">
                     Categoria
@@ -307,19 +366,19 @@ const FormularioAgregarProducto = ({setMostarTabla, listaProductos ,setProductos
                 </label>
                 <label className='flex flex-col' htmlFor="existencias">
                     Existencias
-                    <input className=' border-gray-900 w-full py-2 rounded-lg' name='existencias' type="number" min='0' placeholder='0' required/>
+                    <input className=' border-gray-900 w-full p-1 rounded-lg' name='existencias' type="number" min='0' placeholder='0' required/>
                 </label>
                 <label className='flex flex-col' htmlFor="costoProduccion">
                     Costo de Produccion
-                    <input className='border-gray-900 w-full py-2 rounded-lg' name='costoProduccion' type="number" min='0' placeholder='0 $' required/>
+                    <input className='border-gray-900 w-full p-1 rounded-lg' name='costoProduccion' type="number" min='0' placeholder='0 $' required/>
                 </label>
                 <label className='flex flex-col' htmlFor="valorVenta">
                     Valor de Venta
-                    <input className=' border-gray-900 w-full py-2 rounded-lg' name='valorVenta' type="number" min='0' placeholder='0 $' required/>
+                    <input className=' border-gray-900 w-full p-1 rounded-lg' name='valorVenta' type="number" min='0' placeholder='0 $' required/>
                 </label>
                 <label className='flex flex-col' htmlFor="fechaIngreso">
                     Fecha de Ingreso
-                    <input className=' border-gray-900 w-full py-2 rounded-lg' name='fechaIngreso' type="date" required/>
+                    <input className=' border-gray-900 w-full p-1 rounded-lg' name='fechaIngreso' type="date" required/>
                 </label>
 
                 <button 
@@ -332,6 +391,5 @@ const FormularioAgregarProducto = ({setMostarTabla, listaProductos ,setProductos
         </div>
     );
 };
-
 
 export default Productos;
