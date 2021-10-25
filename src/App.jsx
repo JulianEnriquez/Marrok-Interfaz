@@ -10,56 +10,63 @@ import Login from 'pages/Login';
 import Registro from 'pages/Registro';
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import 'styles/App.css';
+import { Auth0Provider } from '@auth0/auth0-react';
 
 function App() {
   return (
-    <Router>
-      <Switch>
+    <Auth0Provider
+      domain="marroking.us.auth0.com"
+      clientId="6IRaE8TRqsy5BFwdOhfhSJ6m9siibjpH"
+      redirectUri={window.location.origin}
+    > 
+      <Router>
+        <Switch>
 
-        <Route path={['/admin','/admin/ventas','/admin/productos','/admin/usuarios']}>
-          <PrivateLayout>
-            <Switch>
-              <Route path='/admin/ventas'>
-                <Ventas/>
-              </Route>
-              <Route path='/admin/productos'>
-                <Productos/>
-              </Route>
-              <Route path='/admin/usuarios'>
-                <Usuarios/>
-              </Route>
-              <Route path='/admin'>
-                <Admin/>
-              </Route>
-            </Switch>
-          </PrivateLayout>
-        </Route>
+          <Route path={['/admin','/admin/ventas','/admin/productos','/admin/usuarios']}>
+            <PrivateLayout>
+              <Switch>
+                <Route path='/admin/ventas'>
+                  <Ventas/>
+                </Route>
+                <Route path='/admin/productos'>
+                  <Productos/>
+                </Route>
+                <Route path='/admin/usuarios'>
+                  <Usuarios/>
+                </Route>
+                <Route path='/admin'>
+                  <Admin/>
+                </Route>
+              </Switch>
+            </PrivateLayout>
+          </Route>
 
-        <Route path={['/login','/registro']}>
-          <AuthLayout>
-            <Switch>
-              <Route path='/login'>
-                <Login/>
-              </Route>
-              <Route path='/registro'>
-                <Registro/>
-              </Route>
-            </Switch>
-          </AuthLayout>
-        </Route>
+          <Route path={['/login','/registro']}>
+            <AuthLayout>
+              <Switch>
+                <Route path='/login'>
+                  <Login/>
+                </Route>
+                <Route path='/registro'>
+                  <Registro/>
+                </Route>
+              </Switch>
+            </AuthLayout>
+          </Route>
 
-        <Route path ={['/']}>
-          <PublicLayout>
-            <Switch>
-              <Route path = '/'>
-              <Index/>
-              </Route>
-            </Switch>
-          </PublicLayout>
-        </Route>
+          <Route path ={['/']}>
+            <PublicLayout>
+              <Switch>
+                <Route path = '/'>
+                <Index/>
+                </Route>
+              </Switch>
+            </PublicLayout>
+          </Route>
 
-      </Switch>
-    </Router>
+        </Switch>
+      </Router>
+    </Auth0Provider>
   );
 }
 

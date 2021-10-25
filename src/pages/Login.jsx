@@ -1,5 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import Google from 'components/google';
+
+
 
 
 const datos = (event) =>{
@@ -54,12 +57,10 @@ const Login = () => {
                             </div>
                         </div>
                         
-                        <div className='flex justify-center p-2 '>Inicia sesion con Google</div>
-                        <div className='flex justify-center p-2'>
-                            <Link to='/'>
-                            <button className='border-none font-bold bg-red-600 rounded-full py-2 px-10  text-white hover:bg-white hover:text-red-600'>Google</button>
-                            </Link>
-                        </div>
+                        
+                        <div className='flex justify-center p-2'>Inicia sesion con Google</div>
+                        <Google/> 
+                        
 
                         
                     </form>
@@ -77,7 +78,7 @@ const Login = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default Login;

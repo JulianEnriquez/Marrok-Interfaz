@@ -2,11 +2,13 @@ import React from 'react'
 import { Link, } from 'react-router-dom'
 import ImagenLogo from './ImagenLogo'
 import useSelectoresActivos from 'hooks/useSelectoresActivos';
+import { useAuth0 } from "@auth0/auth0-react";
 
 
 
 
 const Sidebar = () => {
+    const { logout } = useAuth0();
     return (
         <nav className='w-72 border border-black h-full flex flex-col bg-gray-200 p-4'>
             <Link to='/admin'>
@@ -17,7 +19,7 @@ const Sidebar = () => {
                 <Boton icono='fas fa-cubes' ruta='/admin/productos' nombre= 'Productos' />
                 <Boton icono='fas fa-user-tie' ruta= '/admin/usuarios' nombre = 'Usuarios'/>
             </div>
-            <Boton icono='fas fa-door-closed' ruta= '/index' nombre = 'Salir'/>
+            <button onClick={() => logout({ returnTo: window.location.origin })} className='p-2 mt-20 w-full flex items-center bg-gray-700 text-white rounded-xl hover:bg-yellow-500'><i className='fas fa-door-open px-2'/>Cerrar Sesión</button>
         </nav>
     );
 };

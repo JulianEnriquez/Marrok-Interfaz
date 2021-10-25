@@ -324,11 +324,11 @@ const FormularioAgregarProducto = ({setMostarTabla, listaProductos ,setProductos
         .request(options)
         .then(function (response) {
            console.log(response.data);
-           toast.success('Vehículo agregado con éxito');
+           toast.success('Producto agregado con éxito');
         })
         .catch(function (error) {
            console.error(error);
-           toast.error('Error creando un vehículo');
+           toast.error('Error creando un Producto');
         });
 
         setMostarTabla(true);
@@ -337,14 +337,14 @@ const FormularioAgregarProducto = ({setMostarTabla, listaProductos ,setProductos
     };
 
     return (
-        <div className='flex flex-col items-center justify-center'>
-            <h2>Agregar nuevo producto</h2>
+        <div className='flex flex-col items-center justify-center bg-gray-300 rounded-lg'>
+            <h2 className='p-4 font-sans text-3xl'>Agregar nuevo producto</h2>  
             <form ref={form} onSubmit={submitForm} className='flex flex-col'>
-                <label className='flex flex-col' htmlFor="idProducto">
+                <label className='flex flex-col font-semibold' htmlFor="idProducto">
                     Id Producto
                     <input className='border-gray-900 w-full p-1 rounded-lg' name='id' type="number" placeholder='id' min={0} required />
                 </label>
-                <label className='flex flex-col' htmlFor="categoria">
+                <label className='flex flex-col font-semibold' htmlFor="categoria">
                     Categoria
                     <select name="category" required defaultValue={0}>
                         <option disabled value={0}>Seleccione la categoria</option>
@@ -355,7 +355,7 @@ const FormularioAgregarProducto = ({setMostarTabla, listaProductos ,setProductos
                         <option>Niños</option>
                     </select>
                 </label>
-                <label className='flex flex-col' htmlFor="estilo">
+                <label className='flex flex-col font-semibold' htmlFor="estilo">
                     Estilo
                     <select name="estilo" defaultValue={0} required>
                         <option disabled value={0}>Seleccione un estilo</option>
@@ -364,26 +364,26 @@ const FormularioAgregarProducto = ({setMostarTabla, listaProductos ,setProductos
                         <option>Deportivo</option>
                     </select>
                 </label>
-                <label className='flex flex-col' htmlFor="existencias">
+                <label className='flex flex-col font-semibold' htmlFor="existencias">
                     Existencias
                     <input className=' border-gray-900 w-full p-1 rounded-lg' name='existencias' type="number" min='0' placeholder='0' required/>
                 </label>
-                <label className='flex flex-col' htmlFor="costoProduccion">
+                <label className='flex flex-col font-semibold' htmlFor="costoProduccion">
                     Costo de Produccion
                     <input className='border-gray-900 w-full p-1 rounded-lg' name='costoProduccion' type="number" min='0' placeholder='0 $' required/>
                 </label>
-                <label className='flex flex-col' htmlFor="valorVenta">
+                <label className='flex flex-col font-semibold' htmlFor="valorVenta">
                     Valor de Venta
                     <input className=' border-gray-900 w-full p-1 rounded-lg' name='valorVenta' type="number" min='0' placeholder='0 $' required/>
                 </label>
-                <label className='flex flex-col' htmlFor="fechaIngreso">
+                <label className='flex flex-col font-semibold' htmlFor="fechaIngreso">
                     Fecha de Ingreso
                     <input className=' border-gray-900 w-full p-1 rounded-lg' name='fechaIngreso' type="date" required/>
                 </label>
 
                 <button 
                 type='submit' 
-                className='mt-10 col-span-2 bg-green-500 p-2 rounded-lg shadow-md hover:bg-green-900 text-white'
+                className='my-10 col-span-2 bg-green-500 p-2 rounded-lg shadow-2xl hover:bg-green-900 text-white'
                 > 
                     Guardar Producto
                 </button>

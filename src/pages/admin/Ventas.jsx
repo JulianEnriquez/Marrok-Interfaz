@@ -100,10 +100,6 @@ const TablaVentas = ({listaVentas, setEjecutarConsulta}) => {
     },[busqueda, listaVentas])
 
     //----------------- Termina Busqueda ----------------
-    // useEffect(()=>{
-    //     //console.log('este es el listado de ventas', listaVentas);
-    // },[listaVentas]);
-
     return (
         <div className= 'flex flex-col items-center justify-center w-full'>
             <input
@@ -116,8 +112,8 @@ const TablaVentas = ({listaVentas, setEjecutarConsulta}) => {
             <table className='tabla'>
                 <thead>
                     <tr>
-                        <th>Fecha Venta</th>
                         <th>No. Factura</th>
+                        <th>Fecha Venta</th>
                         <th>Vendedor</th>
                         <th>Id Vendedor</th>
                         <th>Nombre del Cliente</th>
@@ -153,7 +149,7 @@ const FilaVentas =({venta , setEjecutarConsulta}) =>{
         idVendedor: venta.idVendedor,
         nombreCliente: venta.nombreCliente,
         idCliente: venta.idCliente,
-        descripcionProducto: venta.desProducto,
+        desProducto: venta.desProducto,
         unidades: venta.unidades,
         precioUnitario: venta.precioUnitario,
         totalVenta: venta.totalVenta,
@@ -232,8 +228,8 @@ const FilaVentas =({venta , setEjecutarConsulta}) =>{
                      onChange={(e) => setInfoNuevaVenta({...infoNuevaVenta, idCliente: e.target.value})}/> 
                     </td>
                     <td><input className='border-2 border-gray-900 w-full p-1 rounded-lg focus:outline-none'
-                     type="text" value={infoNuevaVenta.descripcionProducto}
-                     onChange={(e) => setInfoNuevaVenta({...infoNuevaVenta, descripcionProducto: e.target.value})}/> 
+                     type="text" value={infoNuevaVenta.desProducto}
+                     onChange={(e) => setInfoNuevaVenta({...infoNuevaVenta, desProducto: e.target.value})}/> 
                     </td>
                     <td><input className='border-2 border-gray-900 w-full p-1 rounded-lg focus:outline-none'
                      type="number" value={infoNuevaVenta.unidades}
