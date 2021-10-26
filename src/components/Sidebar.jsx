@@ -15,9 +15,9 @@ const Sidebar = () => {
                 <ImagenLogo/>
             </Link>
             <div className='my-4'>
-                <Boton icono='fas fa-file-invoice' ruta='https://guarded-lake-84556.herokuapp.com/admin/ventas' nombre='Ventas' />
-                <Boton icono='fas fa-cubes' ruta='https://guarded-lake-84556.herokuapp.com/admin/productos' nombre= 'Productos' />
-                <Boton icono='fas fa-user-tie' ruta= 'https://guarded-lake-84556.herokuapp.com/admin/usuarios' nombre = 'Usuarios'/>
+                <Boton icono='fas fa-file-invoice' ruta='/admin/ventas' nombre='Ventas' />
+                <Boton icono='fas fa-cubes' ruta='/admin/productos' nombre= 'Productos' />
+                <Boton icono='fas fa-user-tie' ruta= '/admin/usuarios' nombre = 'Usuarios'/>
             </div>
             <button onClick={() => logout({ returnTo: 'https://guarded-lake-84556.herokuapp.com' })} className='p-2 mt-20 w-full flex items-center bg-gray-700 text-white rounded-xl hover:bg-yellow-500'><i className='fas fa-door-open px-2'/>Cerrar Sesión</button>
         </nav>
