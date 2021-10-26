@@ -19,4 +19,4 @@ const useSelectoresActivos = (ruta) => {
         return isActive;
 };
 
-export default useSelectoresActivos
+export default useSelectoresActivos;
