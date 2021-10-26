@@ -15,7 +15,7 @@ const Ventas = () => {
     const [ejecutarConsulta, setEjecutarConsulta] = useState(true);
 
     const obtenerProductos = async () => {
-        const options = {method: 'GET', url: 'http://localhost:5050/ventas'}
+        const options = {method: 'GET', url: 'https://arcane-tundra-28953.herokuapp.com/ventas'}
         await axios
         .request(options)
         .then(function (response){
@@ -161,7 +161,7 @@ const FilaVentas =({venta , setEjecutarConsulta}) =>{
         //enviar la info al backend
         const options = {
           method: 'PATCH',
-          url: `http://localhost:5050/ventas/${venta._id}/`,
+          url: `https://arcane-tundra-28953.herokuapp.com/ventas/${venta._id}/`,
           headers: { 'Content-Type': 'application/json' },
           data: { ...infoNuevaVenta},
         };
@@ -183,7 +183,7 @@ const FilaVentas =({venta , setEjecutarConsulta}) =>{
     const eliminarVenta = async()=>{
         const options = {
             method: 'DELETE',
-            url: 'http://localhost:5050/ventas/:id',
+            url: 'https://arcane-tundra-28953.herokuapp.com/ventas/:id',
             headers: {'Content-Type': 'application/json'},
             data: {id :venta._id}
           };
@@ -329,7 +329,7 @@ const FormularioAgregarProducto = ({setMostarTabla, listaVentas ,setProductos}) 
 
         const options = {
              method: 'POST',
-             url: 'http://localhost:5050/ventas',
+             url: 'https://arcane-tundra-28953.herokuapp.com/ventas',
              headers: { 'Content-Type': 'application/json' },
              data: {...nuevaVenta, noFactura: nuevaVenta.noFactura},
             };

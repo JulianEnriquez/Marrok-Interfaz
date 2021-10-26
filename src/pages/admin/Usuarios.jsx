@@ -15,7 +15,7 @@ const Usuarios = () => {
     const [ejecutarConsulta, setEjecutarConsulta] = useState(true);
 
     const obtenerUsuarios = async () => {
-        const options = {method: 'GET', url: 'http://localhost:5050/usuarios/'}
+        const options = {method: 'GET', url: 'https://arcane-tundra-28953.herokuapp.com/usuarios/'}
         await axios
         .request(options)
         .then(function (response){
@@ -151,7 +151,7 @@ const FilaUsuarios =({usuario , setEjecutarConsulta}) =>{
         //enviar la info al backend
         const options = {
           method: 'PATCH',
-          url: `http://localhost:5050/usuarios/${usuario._id}/`,
+          url: `https://arcane-tundra-28953.herokuapp.com/usuarios/${usuario._id}/`,
           headers: { 'Content-Type': 'application/json' },
           data: { ...infoNuevoUsuario},
         };
@@ -173,7 +173,7 @@ const FilaUsuarios =({usuario , setEjecutarConsulta}) =>{
     const eliminarUsuario = async()=>{
         const options = {
             method: 'DELETE',
-            url: 'http://localhost:5050/usuarios/:id/',
+            url: 'https://arcane-tundra-28953.herokuapp.com/usuarios/:id/',
             headers: {'Content-Type': 'application/json'},
             data: {id :usuario._id}
           };
@@ -296,7 +296,7 @@ const FormularioAgregarUsuario = ({setMostarTabla, listaUsuarios ,setProductos})
 
         const options = {
              method: 'POST',
-             url: 'http://localhost:5050/usuarios',
+             url: 'https://arcane-tundra-28953.herokuapp.com/usuarios',
              headers: { 'Content-Type': 'application/json' },
              data: {...nuevoUsuario, idUsuario: nuevoUsuario.idUsuario},
             };
