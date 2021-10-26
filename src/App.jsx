@@ -17,7 +17,7 @@ function App() {
     <Auth0Provider
       domain="marroking.us.auth0.com"
       clientId="6IRaE8TRqsy5BFwdOhfhSJ6m9siibjpH"
-      redirectUri={window.location.origin}
+      redirectUri='http//https://guarded-lake-84556.herokuapp.com/admin'
     > 
       <Router>
         <Switch>
